@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "placeholder-sbercredits"
+version = "0.1.0"
+description = ""
+authors = ["darklorian <lolpokens@mail.ru>"]
+readme = "README.md"
+packages = [{include = "placeholder_sbercredits"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+python-multipart = "^0.0.6"
+fastapi = "^0.104.1"
+sqlalchemy = "^2.0.23"
+celery = "^5.3.6"
+redis = "^5.0.1"
+asyncpg = "^0.29.0"
+uvicorn = "^0.24.0.post1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

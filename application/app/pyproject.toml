@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "application-sbercredites"
+version = "0.1.0"
+description = ""
+authors = ["darklorian <lolpokens@mail.ru>"]
+readme = "README.md"
+packages = [{include = "application_sbercredites"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.104.1"
+uvicorn = "^0.24.0.post1"
+sqlalchemy = "^2.0.23"
+asyncpg = "^0.29.0"
+python-multipart = "^0.0.6"
+celery = "^5.3.6"
+redis = "^5.0.1"
+minio = "^7.2.0"
+httpx = "^0.25.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

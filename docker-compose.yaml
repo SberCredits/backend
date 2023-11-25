@@ -1,0 +1,92 @@
+version: "3.10"
+
+x-postgres-environment: &x-postgres-environment
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  POSTGRES_HOST: ${POSTGRES_HOST}
+  POSTGRES_NAME: ${POSTGRES_NAME}
+
+x-minio-environment: &x-minio-environment
+  MINIO_ROOT_USER: ${MINIO_USER}
+  MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
+
+x-redis-environment: &x-redis-environment
+  REDIS_PASSWORD: ${REDIS_PASSWORD}
+  REDIS_HOST: ${REDIS_HOST}
+  REDIS_DATABASE: ${REDIS_DATABASE}
+
+services:
+  database:
+    image: postgres:alpine
+    restart: always
+    environment:
+      <<: *x-postgres-environment
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+  application:
+    build: application
+    environment:
+      <<: [ *x-postgres-environment, *x-redis-environment ]
+
+    volumes:
+      - "./application/app:/application"
+
+  audit:
+    build: audit
+    environment:
+      <<: [ *x-postgres-environment, *x-redis-environment ]
+
+    volumes:
+      - "./audit/app:/application"
+
+  minio:
+    restart: always
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      <<: *x-minio-environment
+    volumes:
+      - mindata:/export
+    command: server /export --console-address :9001
+
+  authentication:
+    build: authentication
+    environment:
+      <<: [ *x-postgres-environment, *x-redis-environment ]
+      ACCESS_TOKEN: ${ACCESS_TOKEN}
+    volumes:
+      - "./authentication/app:/application"
+
+  placeholder:
+    build: placeholder
+    environment:
+      <<: [ *x-postgres-environment, *x-redis-environment ]
+    volumes:
+      - "./placeholder/app:/application"
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf:ro"
+    ports:
+      - "80:80"
+      - "443:443"
+
+
+volumes:
+  mindata:
+  pgdata:
+
