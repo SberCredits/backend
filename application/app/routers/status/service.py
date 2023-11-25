@@ -44,3 +44,6 @@ class Service:
     async def get_application(self, application_id: uuid.UUID) -> Application:
         return await self.applications.get(application_id=application_id, one=True)
 
+    async def set_status(self, app, status):
+        app.status = status
+        await self.session.commit()

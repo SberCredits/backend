@@ -5,10 +5,11 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends, Form, HTTPException
 from starlette.status import HTTP_404_NOT_FOUND
 
+from dependencies.logger import TimedRoute
 from routers.applications.pydantic_models import ApplicationsModel
 from routers.applications.service import Service
 
-router = APIRouter()
+router = APIRouter(route_class=TimedRoute)
 
 
 @router.get("/", response_model=List[ApplicationsModel])
