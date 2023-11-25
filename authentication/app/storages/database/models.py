@@ -28,7 +28,7 @@ class Account(Base):
     __tablename__ = "account"
 
     profile_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey('account_profile.id'))\
-    profile = relationship(AccountProfile)
+    profile = relationship("AccountProfile", lazy="selectin")
 
     username: Mapped[str] = mapped_column(String)
     password: Mapped[str] = mapped_column(String)
