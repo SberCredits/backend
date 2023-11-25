@@ -15,6 +15,7 @@ async def get_token(
         password: str = Form(...)
 ):
     user = await service.get_user(username, password)
+
     return {
         "access_token": user.access_token,
         "type": "Bearer"

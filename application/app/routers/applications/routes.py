@@ -1,16 +1,17 @@
 import uuid
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, Form, HTTPException
 from starlette.status import HTTP_404_NOT_FOUND
 
+from routers.applications.pydantic_models import ApplicationsModel
 from routers.applications.service import Service
 
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/", response_model=List[ApplicationsModel])
 async def get_applications(
         service: Annotated[Service, Depends()],
         application_id__istartswith: uuid.UUID = Form(None)
