@@ -17,7 +17,7 @@ class AccountProfile(Base):
 class Account(Base):
     __tablename__ = "account"
 
-    profile: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey('account_profile.id'))
+    profile_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey('account_profile.id'))
     username: Mapped[str] = mapped_column(String)
     password: Mapped[str] = mapped_column(String)
     access_token: Mapped[str] = mapped_column(String)
