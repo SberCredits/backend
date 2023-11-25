@@ -70,6 +70,23 @@ class PDN(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
+class ApplicationDetails(Base):
+    __tablename__ = "application_details"
+
+    type: Mapped[str] = mapped_column(String)
+
+    max_sum: Mapped[int] = mapped_column(Integer)
+    accepted_sum: Mapped[int] = mapped_column(Integer)
+
+    max_rate: Mapped[int] = mapped_column(Integer)
+    accepted_rate: Mapped[int] = mapped_column(Integer)
+
+    max_term: Mapped[int] = mapped_column(Integer)
+    accepted_term: Mapped[int] = mapped_column(Integer)
+
+    monthly_payment: Mapped[float] = mapped_column(Float)
+
+
 class Application(Base):
     """
     personal - персональные данные
@@ -83,11 +100,14 @@ class Application(Base):
 
     personal_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("personal_data.id"), nullable=True)
     employee_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("employee_data.id"), nullable=True)
-    additional_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("additional_data.id"), nullable=True)
+    additional_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("additional_data.id"),
+                                                     nullable=True)
     deposit_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("deposits.id"), nullable=True)
     bki_report_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("bki_report.id"), nullable=True)
     checker_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("account.id"), nullable=True)
     pdn_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("pdn.id"), nullable=True)
+    details_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("application_details.id"),
+                                                  nullable=True)
     status: Mapped[str] = mapped_column(String, default="new")
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
@@ -98,3 +118,4 @@ class Application(Base):
     deposit = relationship("Deposits", lazy="selectin")
     bki_report = relationship("BKIReport", lazy="selectin")
     checker = relationship("Account", lazy="selectin")
+    details = relationship("ApplicationDetails", lazy="selectin")
