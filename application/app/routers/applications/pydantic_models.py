@@ -95,8 +95,7 @@ class HistoryModel(BaseModel):
     late_payment: bool | None
     overdue: bool | None
 
-
-class ApplicationModel(BaseModel):
+class ApplicationDataModel(BaseModel):
     id: uuid.UUID
     details: ApplicationDetailsModel | None
     checker: CheckerModel
@@ -109,3 +108,7 @@ class ApplicationModel(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ApplicationModel(BaseModel):
+    application: ApplicationDataModel

@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Form, HTTPException
 from starlette.status import HTTP_404_NOT_FOUND
 
 from dependencies.logger import TimedRoute
-from routers.applications.pydantic_models import ApplicationsModel
+from routers.applications.pydantic_models import ApplicationsModel, ApplicationModel
 from routers.applications.service import Service
 
 router = APIRouter(route_class=TimedRoute)
@@ -21,7 +21,7 @@ async def get_applications(
     return await service.get_applications(application_id__istartswith, order_by)
 
 
-@router.get("/{application_uuid}")
+@router.get("/{application_uuid}", response_model=ApplicationModel)
 async def get_application(
         application_uuid: uuid.UUID,
         service: Annotated[Service, Depends()],
