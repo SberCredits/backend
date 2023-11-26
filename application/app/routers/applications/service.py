@@ -3,7 +3,7 @@ import uuid
 from typing import Annotated
 
 from fastapi import Depends
-from sqlalchemy import select, cast, String, insert, update
+from sqlalchemy import select, cast, String, insert, update, text, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dependencies.requests import client
@@ -19,7 +19,8 @@ class ApplicationRepository:
 
     async def get(
             self,
-            application_id: uuid.UUID = None,
+            application_id: uuid.UUID | str = None,
+            ordering: str = None,
             one: bool = True
     ):
         queries = []
@@ -27,9 +28,17 @@ class ApplicationRepository:
         if application_id:
             queries.append(cast(Application.id, String).istartswith(str(application_id)))
 
+        if ordering:
+            method = asc
+
+            if "-" in ordering:
+                method = desc
+
+            stmt = stmt.order_by(method(ordering[1:]))
+
         stmt = stmt.where(*queries)
         result = await self.session.execute(stmt)
-
+        print(stmt.compile(compile_kwargs={"literal_binds": True}))
         scalars = result.scalars()
         if one:
             return scalars.first()
@@ -44,8 +53,8 @@ class Service:
         self.session = session
         self.applications = applications
 
-    async def get_applications(self, application_id: uuid.UUID):
-        return await self.applications.get(application_id=application_id, one=False)
+    async def get_applications(self, application_id: str, order_by: str):
+        return await self.applications.get(application_id=application_id, ordering=order_by, one=False)
 
     async def get_application(self, application_id: uuid.UUID) -> Application:
         return await self.applications.get(application_id=application_id, one=True)

@@ -15,9 +15,10 @@ router = APIRouter(route_class=TimedRoute)
 @router.get("/", response_model=List[ApplicationsModel])
 async def get_applications(
         service: Annotated[Service, Depends()],
-        application_id__istartswith: uuid.UUID = Form(None)
+        application_id__istartswith: str = None,
+        order_by: str = "+application_id"
 ):
-    return await service.get_applications(application_id__istartswith)
+    return await service.get_applications(application_id__istartswith, order_by)
 
 
 @router.get("/pdn/{application_uuid}")
