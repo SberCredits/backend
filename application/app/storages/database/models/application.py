@@ -87,6 +87,37 @@ class ApplicationDetails(Base):
     monthly_payment: Mapped[float] = mapped_column(Float)
 
 
+class CreditAnalysis(Base):
+    __tablename__ = "credit_analysis"
+
+    non_payment_risk_sum: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    non_payment_risk_salary: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    non_payment_risk_salary_additional: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    risk_debt_upper: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    risk_down_payment_media: Mapped[bool] = mapped_column(Boolean, nullable=True)
+
+
+class CreditHistory(Base):
+    """
+    есть кредитная история
+    статус: низкий, средний, высокий
+    микрозаймы
+    частые микрозаймы
+    оплата кредитов за счёт кредитов
+    задержка платежей
+    задержка платежа сейчас
+    """
+    __tablename__ = "credit_history"
+
+    has_history: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    status: Mapped[str] = mapped_column(String, nullable=True)
+    microloans: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    often_microloans: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    pay_by_loan: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    late_payment: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    is_overdue: Mapped[bool] = mapped_column(Boolean, nullable=True)
+
+
 class Application(Base):
     """
     personal - персональные данные
@@ -108,7 +139,10 @@ class Application(Base):
     pdn_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("pdn.id"), nullable=True)
     details_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("application_details.id"),
                                                   nullable=True)
+    analysis_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("credit_analysis.id"), nullable=True)
+    history_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("credit_history.id"), nullable=True)
     status: Mapped[str] = mapped_column(String, default="new")
+    message: Mapped[str] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     pdn = relationship("PDN", lazy="selectin")
@@ -119,3 +153,5 @@ class Application(Base):
     bki_report = relationship("BKIReport", lazy="selectin")
     checker = relationship("Account", lazy="selectin")
     details = relationship("ApplicationDetails", lazy="selectin")
+    analysis = relationship("CreditAnalysis", lazy="selectin")
+    history = relationship("CreditHistory", lazy="selectin")

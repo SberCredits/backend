@@ -23,12 +23,14 @@ async def status(
 async def status(
         application_uuid: uuid.UUID,
         service: Annotated[Service, Depends()],
-        status: str = Form(...)
+        status: str = Form(...),
+        message: str = Form(None)
 ):
     statuses = ["new", "work", "modification", "request"]
     if status not in statuses:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST, detail=f"status can be {''.join(statuses)}")
 
     app = await service.get_application(application_id=application_uuid)
-    await service.set_status(app, status)
-    return {'status': app.status}
+    await service.set_status(app, status, message)
+    return {'status': app.status,
+            "message": message}

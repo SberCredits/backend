@@ -21,6 +21,18 @@ async def get_applications(
     return await service.get_applications(application_id__istartswith, order_by)
 
 
+@router.get("/{application_uuid}")
+async def get_application(
+        application_uuid: uuid.UUID,
+        service: Annotated[Service, Depends()],
+):
+    application = await service.get_application(application_uuid)
+    if not application:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Application not found!")
+
+    return {"application": application}
+
+
 @router.get("/pdn/{application_uuid}")
 async def get_pdn(
         application_uuid: uuid.UUID,
